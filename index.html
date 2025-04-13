@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Gold Trading Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/@tensorflow/tfjs"></script>
+    <style>
+        :root {
+            --primary: #ffd700;
+            --secondary: #1e293b;
+            --accent: #0284c7;
+        }
+        
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gold-gradient {
+            background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-container {
+            height: 400px;
+            width: 100%;
+        }
+
+        @keyframes pulse {
+            0% {transform: scale(1);}
+            50% {transform: scale(1.05);}
+            100% {transform: scale(1);}
+        }
+
+        .signal-active {
+            animation: pulse 1s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="border-b border-slate-800 bg-slate-900">
+            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+                <h1 class="text-2xl font-bold gold-gradient">
+                    <i class="bi bi-graph-up-arrow"></i> AI Gold Trader Pro
+                </h1>
+                <div class="flex items-center gap-4">
+                    <div class="text-sm">
+                        <span class="text-slate-400">Balance:</span>
+                        <span class="text-green-400">$50,000.00</span>
+                    </div>
+                    <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+                        <i class="bi bi-power"></i> Emergency Stop
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Left Column -->
+                <div class="lg:col-span-2 space-y-8">
+                    <!-- Chart Card -->
+                    <div class="card rounded-xl p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">XAUUSD Live Chart</h2>
+                            <div class="flex gap-2">
+                                <select class="bg-slate-800 border border-slate-700 rounded px-2 py-1">
+                                    <option>1M</option>
+                                    <option>5M</option>
+                                    <option>15M</option>
+                                    <option>1H</option>
+                                </select>
+                                <button class="bg-slate-800 hover:bg-slate-700 px-3 py-1 rounded">
+                                    <i class="bi bi-gear"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <canvas id="goldChart" class="chart-container"></canvas>
+                    </div>
+
+                    <!-- Trading Controls -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="card rounded-xl p-4">
+                            <h3 class="text-lg font-bold mb-4">Manual Trading</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <button class="bg-green-600 hover:bg-green-700 py-3 rounded-lg font-bold">
+                                    BUY <span class="text-sm opacity-75">@1897.35</span>
+                                </button>
+                                <button class="bg-red-600 hover:bg-red-700 py-3 rounded-lg font-bold">
+                                    SELL <span class="text-sm opacity-75">@1897.32</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card rounded-xl p-4">
+                            <h3 class="text-lg font-bold mb-4">Auto Trading</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <span>AI Auto-Trade</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                    </label>
+                                </div>
+                                <div class="text-sm text-slate-400">
+                                    Next signal in: <span class="text-white">2m 30s</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="space-y-8">
+                    <!-- AI Signal Card -->
+                    <div class="card rounded-xl p-4">
+                        <h3 class="text-lg font-bold mb-4">AI Signal</h3>
+                        <div class="signal-active bg-green-600/20 border border-green-500 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-green-400 mb-2">BUY</div>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <div class="text-slate-400">Entry</div>
+                                    <div class="font-bold">1897.35</div>
+                                </div>
+                                <div>
+                                    <div class="text-slate-400">Stop Loss</div>
+                                    <div class="font-bold">1896.80</div>
+                                </div>
+                                <div>
+                                    <div class="text-slate-400">Take Profit</div>
+                                    <div class="font-bold">1898.45</div>
+                                </div>
+                                <div>
+                                    <div class="text-slate-400">Confidence</div>
+                                    <div class="font-bold text-green-400">89%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Trades -->
+                    <div class="card rounded-xl p-4">
+                        <h3 class="text-lg font-bold mb-4">Active Trades</h3>
+                        <div class="space-y-4">
+                            <div class="bg-slate-800 rounded-lg p-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-green-400">BUY</span>
+                                    <span class="text-green-400">+12.5 pips</span>
+                                </div>
+                                <div class="text-sm text-slate-400 mt-1">
+                                    Entry: 1895.20 | SL: 1894.70 | TP: 1896.30
+                                </div>
+                            </div>
+                            <div class="bg-slate-800 rounded-lg p-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-red-400">SELL</span>
+                                    <span class="text-red-400">-3.2 pips</span>
+                                </div>
+                                <div class="text-sm text-slate-400 mt-1">
+                                    Entry: 1897.40 | SL: 1897.90 | TP: 1896.40
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Daily Stats -->
+                    <div class="card rounded-xl p-4">
+                        <h3 class="text-lg font-bold mb-4">Today's Performance</h3>
+                        <div class="grid grid-cols-2 gap-4 text-center">
+                            <div>
+                                <div class="text-slate-400 text-sm">Profit/Loss</div>
+                                <div class="text-xl font-bold text-green-400">+$1,245.50</div>
+                            </div>
+                            <div>
+                                <div class="text-slate-400 text-sm">Win Rate</div>
+                                <div class="text-xl font-bold">85%</div>
+                            </div>
+                            <div>
+                                <div class="text-slate-400 text-sm">Total Trades</div>
+                                <div class="text-xl font-bold">24</div>
+                            </div>
+                            <div>
+                                <div class="text-slate-400 text-sm">Target Progress</div>
+                                <div class="text-xl font-bold text-blue-400">78%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize Chart
+        const ctx = document.getElementById('goldChart').getContext('2d');
+        const goldChart = new Chart(ctx, {
+            type: 'candlestick',
+            data: {
+                datasets: [{
+                    data: [
+                        { t: new Date('2023-01-01'), o: 1890, h: 1895, l: 1885, c: 1892 },
+                        { t: new Date('2023-01-02'), o: 1892, h: 1898, l: 1890, c: 1895 },
+                        // Add more data points
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#94a3b8'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#94a3b8'
+                        }
+                    }
+                }
+            }
+        });
+
+        // AI Model initialization
+        async function initAIModel() {
+            const model = await tf.loadLayersModel('path_to_model/model.json');
+            // Add AI prediction logic
+        }
+
+        // WebSocket connection for live data
+        function initWebSocket() {
+            const ws = new WebSocket('wss://your-mt5-websocket-endpoint');
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                // Update UI with live data
+            };
+        }
+
+        // Initialize components
+        document.addEventListener('DOMContentLoaded', () => {
+            initAIModel();
+            initWebSocket();
+        });
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
